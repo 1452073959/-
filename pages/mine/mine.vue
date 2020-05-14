@@ -9,7 +9,7 @@
 			</view>
 		</view>
 
-		<view class="login">
+		<view class="login" v-if="loginin">
 			<view class="logintrue">
 				<view class="loginicon">
 					请先登录账号
@@ -19,18 +19,32 @@
 					授权登录
 				</button>
 			</view>
+		</view>
 
-
+		<view v-else>
+			<!-- 一般用法 -->
+			<uni-list>
+				<uni-list-item title="标题文字" :show-arrow="false"></uni-list-item>
+				<uni-list-item title="标题文字"></uni-list-item>
+				<uni-list-item title="标题文字" :show-badge="true" badge-text="12"></uni-list-item>
+				<uni-list-item title="禁用状态" :disabled="true" :show-badge="true" badge-text="12"></uni-list-item>
+			</uni-list>
 		</view>
 	</view>
 </template>
 
 <script>
+	import uniList from "@/components/uni-list/uni-list.vue"
+	import uniListItem from "@/components/uni-list-item/uni-list-item.vue"
 	export default {
 		data() {
 			return {
-
+				loginin: true,
 			}
+		},
+		components: {
+			uniList,
+			uniListItem
 		},
 		methods: {
 			//获取用户信息
@@ -89,8 +103,6 @@
 <style>
 	.content {
 		width: 100%;
-		height: 1050rpx;
-		background-color: #F1F1F1;
 	}
 
 	.avatar {
@@ -119,12 +131,13 @@
 		background-color: #fff;
 		margin-top: 20rpx;
 	}
-	.logintrue{
+
+	.logintrue {
 		width: 100%;
 		height: 500rpx;
 		background-color: #fff;
 		margin-top: 20rpx;
-padding-top: 30rpx;
+		padding-top: 30rpx;
 	}
 
 	.loginicon {
