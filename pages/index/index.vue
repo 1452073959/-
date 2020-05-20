@@ -8,39 +8,30 @@
 					进行中的会议
 				</text>
 			</view>
-			<view class="lately1">
-				<image src="../../static/logo.png"></image>
-				<text>咖啡厅</text>
-				<text style="margin-top: 50rpx;">进行中</text>
-				<text style="margin-top: 50rpx;margin-left: 100px;">time</text>
-				<view class="lately2">
+			<view v-if="under.length">
+			<view class="lately1" v-for="(item, index) in under" :key="item">
+				<image :src="item.user.email"></image>
+				<text>{{item.room}}</text><text style="margin-left: 65px;font-size: 24rpx;">开始时间:{{item.start}}</text>
+				<text style="margin-top: 70rpx;">进行中</text>
+				<text style="margin-top: 70rpx;margin-left: 65px;font-size: 24rpx;">结束时间:{{item.over}}</text>
+				<view class="lately2" @click="show(item)">
 					查看详情
 				</view>
 			</view>
-			<view class="lately1">
-				<image src="../../static/logo.png"></image>
-				<text>大会议</text>
-				<view class="lately2">
-					查看详情
-				</view>
+			
 			</view>
-
-			<view class="lately1">
-				<image src="../../static/logo.png"></image>
-				<text>大会议</text>
-				<view class="lately2">
-					查看详情
-				</view>
+			<view style="text-align: center;" v-else>
+				暂无相关预约数据
 			</view>
 		</view>
 
 		<view class="foot">
 			<view>
-				<button type="primary">申请会议室</button>
+				<button type="primary" @click="toapplly">申请会议室</button>
 			</view>
 
 			<view>
-				<button type="primary">查看所有未开始的会议</button>
+				<button type="primary" @click="tonotstart">未开始的会议</button>
 			</view>
 
 		</view>
@@ -53,18 +44,67 @@
 	export default {
 		data() {
 			return {
-				title: 'Hello'
+				under: '',
 			}
 		},
 		components: {
 			uniNoticeBar
 		},
-		onLoad() {
-
+		onShow() {
+			this.underway();
 		},
 		methods: {
-			look: function() {
-				console.log(123);
+			toapplly: function() {
+				if (getApp().globalData.userInfo == null) {
+					uni.showModal({
+						title: '提示',
+						content: '请先去授权登陆',
+						success: function(res) {
+							if (res.confirm) {
+								console.log('用户点击确定');
+								uni.switchTab({
+									url: '/pages/mine/mine'
+								});
+							} else if (res.cancel) {
+								console.log('用户点击取消');
+								return false;
+							}
+						}
+					});
+				} else {
+					uni.navigateTo({
+						url: '/pages/apply/apply'
+					});
+				}
+
+			},
+			tonotstart() {
+				uni.navigateTo({
+					url: '/pages/notstart/notstart'
+				});
+			},
+			show(e){
+				console.log(e);
+				uni.navigateTo({
+				    url: '/pages/show/show?data=' + encodeURIComponent(JSON.stringify(e))
+				});
+			},
+			//进行中的会议
+			underway() {
+				let _this = this;
+				uni.request({
+					url: _this.$loginUrl + '/api/v1/underway', //仅为示例，并非真实接口地址。
+					method: 'GET',
+					success: (res) => {
+						console.log(res.data);
+						if (res.data.code == 200) {
+							_this.under = res.data.data;
+						}
+					},
+					fail: (res) => {
+						console.log(res.data);
+					}
+				});
 			}
 		}
 	}
@@ -102,7 +142,7 @@
 
 	.lately1 text {
 		line-height: 50rpx;
-		height: 200rpx;
+		/* height: 200rpx; */
 		position: absolute;
 		margin-top: 5rpx;
 	}

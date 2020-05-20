@@ -1,5 +1,5 @@
 <template>
-	<view class="content">
+	<view class="content" v-if="show1">
 		<view class="head">
 			<view class="avatar">
 				<open-data type="userAvatarUrl"></open-data>
@@ -9,26 +9,26 @@
 			</view>
 		</view>
 
-		<view class="login" v-if="loginin">
-			<view class="logintrue">
-				<view class="loginicon">
-					请先登录账号
+		<view style="margin-top: 30rpx;">
+			<view class="login" v-if="loginin">
+				<view class="logintrue">
+					<view class="loginicon">
+						请先登录账号
+					</view>
+					<button type="default" open-type="getPhoneNumber" @getphonenumber="wxGetphone">获取手机号</button>
+					<button class='bottom' type='primary' open-type="getUserInfo" withCredentials="true" lang="zh_CN" @getuserinfo="wxGetUserInfo">
+						授权登录
+					</button>
 				</view>
-				<button type="default" open-type="getPhoneNumber" @getphonenumber="wxGetphone">获取手机号</button>
-				<button class='bottom' type='primary' open-type="getUserInfo" withCredentials="true" lang="zh_CN" @getuserinfo="wxGetUserInfo">
-					授权登录
-				</button>
 			</view>
-		</view>
-
-		<view v-else>
-			<!-- 一般用法 -->
-			<uni-list>
-				<uni-list-item title="标题文字" :show-arrow="false"></uni-list-item>
-				<uni-list-item title="标题文字"></uni-list-item>
-				<uni-list-item title="标题文字" :show-badge="true" badge-text="12"></uni-list-item>
-				<uni-list-item title="禁用状态" :disabled="true" :show-badge="true" badge-text="12"></uni-list-item>
-			</uni-list>
+			<view v-else>
+				<!-- 一般用法 -->
+				<uni-list>
+					<!-- <uni-list-item title="我的预约" @click="userall"></uni-list-item> -->
+					<uni-list-item title="我的已完成预约" @click="stocks"></uni-list-item>
+					<uni-list-item title="我的未完成预约" @click="Forward"></uni-list-item>
+				</uni-list>
+			</view>
 		</view>
 	</view>
 </template>
@@ -40,6 +40,9 @@
 		data() {
 			return {
 				loginin: true,
+				userInfo: '',
+				OpenId: '',
+				show1:false,
 			}
 		},
 		components: {
@@ -53,12 +56,10 @@
 				uni.getUserInfo({
 					provider: 'weixin',
 					success: function(infoRes) {
-						console.log(infoRes);
-						let nickName = infoRes.userInfo.nickName; //昵称
-						let avatarUrl = infoRes.userInfo.avatarUrl; //头像
+						_this.login()
 					},
 					fail(res) {
-
+						console.log('用户拒绝授权')
 					}
 				});
 			},
@@ -69,30 +70,93 @@
 				console.log(JSON.stringify(e.iv));
 			},
 			login: function() {
+				let _this = this;
+				uni.showLoading({
+					title: '登录中...'
+				});
 				uni.login({
 					provider: 'weixin',
 					success: function(loginRes) {
 						let code = loginRes.code;
-						console.log(loginRes);
 						uni.request({
-							url: 'https://www.example.com/request', //仅为示例，并非真实接口地址。
+							url: _this.$loginUrl + '/api/v1/login', //仅为示例，并非真实接口地址。
 							data: {
-								text: 'uni.request'
+								code: code,
 							},
 							header: {
 								'custom-header': 'hello' //自定义请求头信息
 							},
 							success: (res) => {
-								console.log(res.data);
-								this.text = 'request success';
+								_this.OpenId = res.data.openid
+								getApp().globalData.token = res.data.session_key
+								try {
+									uni.setStorageSync('storage_key', res.data.session_key);
+								} catch (e) {
+									// error
+								}
+								uni.getSetting({
+									success(res) {
+										if (res.authSetting['scope.userInfo']) {
+											_this.loginin = false;
+											// 已经授权，可以直接调用 getUserInfo 获取头像昵称
+											//非第一次授权获取用户信息
+											wx.getUserInfo({
+												success: function(res) {
+													_this.userInfo = res.userInfo;
+													getApp().globalData.userInfo = res.userInfo;
+													_this.updateUserInfo();
+												},
+											})
+										} else {
+											console.log('用户未授权')
+										}
+									}
+								})
+								_this.show1=true;
+								uni.hideLoading();
 							}
 						});
 					}
 				});
+			},
+			Forward: function() {
+				uni.navigateTo({
+					url: '/pages/forward/forward'
+				});
+			},
 
+			stocks() {
+				uni.navigateTo({
+					url: '/pages/stocks/stocks'
+				});
+			},
+			userall() {
+				uni.navigateTo({
+					url: '/pages/userall/userall'
+				});
+			},
+			// 向后台更新信息
+			updateUserInfo() {
+				let _this = this;
+				uni.request({
+					url: _this.$loginUrl + '/api/v1/updateUserInfo', //服务器端地址
+					data: {
+						openid: _this.OpenId,
+						userInfo: _this.userInfo,
+						session_key: uni.getStorageSync('storage_key')
+					},
+					method: 'POST',
+					header: {
+						'content-type': 'application/json'
+					},
+					success: (res) => {
+						
+					}
+
+				});
 			},
 			onLoad() {
-				// this.login()
+				this.login()
 			}
 		},
 

@@ -31,7 +31,7 @@
 }
 .lately1 text {
 	line-height: 50rpx;
-	height: 200rpx;
+	/* height: 200rpx; */
 	position: absolute;
 	margin-top: 5rpx;
 }

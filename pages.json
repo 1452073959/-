@@ -7,12 +7,9 @@
 		// 		"navigationBarTitleText": "111"
 		// 	}
 		// },
-		{
-			"path": "pages/apply/apply",
-			"style": {
-				"navigationBarTitleText": "申请"
-			}
-		},
+
+
+
 		{
 			"path": "pages/index/index",
 			"style": {
@@ -20,19 +17,50 @@
 			}
 		},
 		{
+			"path": "pages/apply/apply",
+			"style": {
+				"navigationBarTitleText": "预约申请"
+			}
+		},
+		{
 			"path": "pages/mine/mine",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
 		}, {
 			"path": "pages/login/login",
 			"style": {}
 		}, {
 			"path": "pages/list/list",
 			"style": {}
-		}, {
+		},
+		{
 			"path": "pages/show/show",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "预约详情"
+			}
 		}
-
+		, {
+			"path": "pages/notstart/notstart",
+			"style": {
+				"navigationBarTitleText": "未开始的预约"
+			}
+		}, {
+			"path": "pages/forward/forward",
+			"style": {
+				"navigationBarTitleText": "我的未开始的预约"
+			}
+		}, {
+			"path": "pages/stocks/stocks",
+			"style": {
+				"navigationBarTitleText": "我的已结束的预约"
+			}
+		}, {
+			"path": "pages/userall/userall",
+			"style": {
+				"navigationBarTitleText": "我的会议预约"
+			}
+		}
 	],
 	"tabBar": {
 		"color": "#444444",

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的会议预约",
+  "usingComponents": {
+    "uni-notice-bar": "/components/uni-notice-bar/uni-notice-bar"
+  }
+}
