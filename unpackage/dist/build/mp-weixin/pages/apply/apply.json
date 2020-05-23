@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "预约申请",
-  "usingComponents": {
-    "uni-notice-bar": "/components/uni-notice-bar/uni-notice-bar",
-    "w-picker": "/components/w-picker/w-picker",
-    "axb-check-box": "/components/axb-checkbox/axb-checkbox"
-  }
-}

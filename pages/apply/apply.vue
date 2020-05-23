@@ -25,9 +25,9 @@
 			</view>
 		</view>
 
-		<w-picker mode="date" startYear="2020" endYear="2029" value="2020-04-09 17:19:00" :current="false" fields="minute"
+		<w-picker mode="date" startYear="2020" endYear="2029"  :current="true" fields="minute"
 		 @confirm="onConfirm($event,'date1')" @cancel="onCancel" :disabled-after="false" ref="date1"></w-picker>
-		<w-picker mode="date" startYear="2020" endYear="2029" value="2020-04-09 17:19:00" :current="false" fields="minute"
+		<w-picker mode="date" startYear="2020" endYear="2029" :current="true" fields="minute"
 		 @confirm="onConfirm2($event,'date2')" @cancel="onCancel" :disabled-after="false" ref="date2"></w-picker>
 		 
 		 
